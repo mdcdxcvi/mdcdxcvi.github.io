@@ -57,3 +57,7 @@ window.voteUp = elementId => {
         }
     });
 }
+
+function saveData() {
+    console.log(data);
+}
