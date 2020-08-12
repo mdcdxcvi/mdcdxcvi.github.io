@@ -11,6 +11,8 @@ let htmlElements = {
     nextContents: document.getElementById("nextContents"),
 }
 
+loadData();
+
 htmlElements.inputText.focus();
 
 htmlElements.addButton.onclick = event => {
@@ -24,6 +26,7 @@ htmlElements.addButton.onclick = event => {
 
     htmlElements.inputText.value = null;
     htmlElements.inputText.focus();
+    saveData();
 }
 
 
@@ -36,6 +39,7 @@ window.deleteElement = elementId => {
     });
 
     document.getElementById(`element-${elementId}`).remove();
+    saveData();
 }
 
 
@@ -46,6 +50,8 @@ window.voteDown = elementId => {
             document.getElementById(`element-${elementId}`).innerHTML = element.getHtml();
         }
     });
+
+    saveData();
 }
 
 
@@ -56,8 +62,23 @@ window.voteUp = elementId => {
             document.getElementById(`element-${elementId}`).innerHTML = element.getHtml();
         }
     });
+
+    saveData();
 }
 
 function saveData() {
-    console.log(data);
+    localStorage.setItem("NextData", JSON.stringify(data));
+}
+
+function loadData() {
+    let loadedData = localStorage.getItem("NextData");
+    data = JSON.parse(loadedData);
+
+    data.elementList.forEach(e => {
+        let element = new NextElement(e.id, e.content);
+        element.positiveVotes = e.positiveVotes;
+        element.negativeVotes = e.negativeVotes;
+
+        htmlElements.nextContents.innerHTML += `<div id="element-${element.id}">${element.getHtml()}</div>`;
+    })
 }
