@@ -71,14 +71,19 @@ function saveData() {
 }
 
 function loadData() {
+    if(!localStorage.key("NextData")) return;
+
     let loadedData = localStorage.getItem("NextData");
     data = JSON.parse(loadedData);
 
-    data.elementList.forEach(e => {
+    data.elementList = data.elementList.map(e => {
         let element = new NextElement(e.id, e.content);
         element.positiveVotes = e.positiveVotes;
         element.negativeVotes = e.negativeVotes;
-
-        htmlElements.nextContents.innerHTML += `<div id="element-${element.id}">${element.getHtml()}</div>`;
+        return element;        
     })
+
+    data.elementList.forEach(e => {
+        htmlElements.nextContents.innerHTML += `<div id="element-${e.id}">${e.getHtml()}</div>`;
+    });
 }
