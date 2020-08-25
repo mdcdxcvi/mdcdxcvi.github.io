@@ -15,16 +15,13 @@ let htmlElements = {
 htmlElements.inputText.focus();
 
 htmlElements.addButton.onclick = event => {
-    let text = htmlElements.inputText.value.trim();
+    addElement();
+}
 
-    if (text) {
-        let e = new NextElement(data.id++, text);
-        data.elementList.push(e);
+htmlElements.inputText.onkeydown = event => {
+    if (event.key === 'Enter') {
+        addElement();
     }
-
-    htmlElements.inputText.value = null;
-    htmlElements.inputText.focus();
-    saveData();
 }
 
 
@@ -83,3 +80,16 @@ database.ref("NextData").on('value', s => {
         htmlElements.nextContents.innerHTML += `<div id="element-${e.id}">${e.getHtml()}</div>`;
     });
 })
+
+function addElement() {
+    let text = htmlElements.inputText.value.trim();
+
+    if (text) {
+        let e = new NextElement(data.id++, text);
+        data.elementList.push(e);
+    }
+
+    htmlElements.inputText.value = null;
+    htmlElements.inputText.focus();
+    saveData();
+ }
