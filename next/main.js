@@ -1,4 +1,5 @@
 import NextElement from './nextElement.js'
+import database from './firebaseDatabase.js'
 
 let data = {
     id: 0,
@@ -11,8 +12,6 @@ let htmlElements = {
     nextContents: document.getElementById("nextContents"),
 }
 
-loadData();
-
 htmlElements.inputText.focus();
 
 htmlElements.addButton.onclick = event => {
@@ -21,7 +20,6 @@ htmlElements.addButton.onclick = event => {
     if (text) {
         let e = new NextElement(data.id++, text);
         data.elementList.push(e);
-        htmlElements.nextContents.innerHTML += `<div id="element-${e.id}">${e.getHtml()}</div>`;
     }
 
     htmlElements.inputText.value = null;
@@ -47,7 +45,6 @@ window.voteDown = elementId => {
     data.elementList.forEach(element => {
         if(element.id == elementId) {
             element.negativeVotes++;
-            document.getElementById(`element-${elementId}`).innerHTML = element.getHtml();
         }
     });
 
@@ -59,7 +56,6 @@ window.voteUp = elementId => {
     data.elementList.forEach(element => {
         if(element.id == elementId) {
             element.positiveVotes++;
-            document.getElementById(`element-${elementId}`).innerHTML = element.getHtml();
         }
     });
 
@@ -67,14 +63,14 @@ window.voteUp = elementId => {
 }
 
 function saveData() {
-    localStorage.setItem("NextData", JSON.stringify(data));
+    database.ref("NextData").set(JSON.stringify(data));
 }
 
-function loadData() {
-    if(!localStorage.key("NextData")) return;
+database.ref("NextData").on('value', s => {
+    if(!s.val()) return;
 
-    let loadedData = localStorage.getItem("NextData");
-    data = JSON.parse(loadedData);
+    htmlElements.nextContents.innerHTML = ''
+    data = JSON.parse(s.val());
 
     data.elementList = data.elementList.map(e => {
         let element = new NextElement(e.id, e.content);
@@ -86,4 +82,4 @@ function loadData() {
     data.elementList.forEach(e => {
         htmlElements.nextContents.innerHTML += `<div id="element-${e.id}">${e.getHtml()}</div>`;
     });
-}
+})
