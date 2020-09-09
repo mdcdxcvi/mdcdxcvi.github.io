@@ -12,6 +12,7 @@ let htmlElements = {
     inputText: document.getElementById("inputText"),
     nextContents: document.getElementById("nextContents"),
     doneContents: document.getElementById("doneContents"),
+    loading: document.getElementById("loading"),
 }
 
 htmlElements.inputText.focus();
@@ -100,6 +101,8 @@ database.ref("NextData").on('value', s => {
         if (e.done) htmlElements.doneContents.innerHTML += htmlElement;
         else htmlElements.nextContents.innerHTML += htmlElement;
     });
+
+    htmlElements.loading.innerHTML = "";
 })
 
 function addElement() {
